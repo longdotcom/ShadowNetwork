@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "738246249319",
+    "firebase_url": "https://shadownetwork-f6f21.firebaseio.com",
+    "project_id": "shadownetwork-f6f21",
+    "storage_bucket": "shadownetwork-f6f21.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738246249319:android:0e3c1f01b93c00c9",
+        "android_client_info": {
+          "package_name": "me.lovell.shadownetwork"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "738246249319-rp0p0mhgl8sstn0aqfonetk1i7ocaavl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "me.lovell.shadownetwork",
+            "certificate_hash": "0fc7bdcee4075fc484299f14d71fc15202cbd0ee"
+          }
+        },
+        {
+          "client_id": "738246249319-v18vkr7kkio36lppgj2ks6frqv3p7iuv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ChUjV-i7kpgbdrNRbemSZ-mgV250iFE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "738246249319-v18vkr7kkio36lppgj2ks6frqv3p7iuv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AccessUserContactsActivity">
+
+    <include
+        android:id="@+id/accessusercontacttoolbar"
+        layout="@layout/appbarlayout"
+        ></include>
+
+    <ListView
+        android:id="@+id/contactnames"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/accessusercontacttoolbar"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp" />
+
+    <ImageButton
+        android:id="@+id/importBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignTop="@+id/accessusercontacttoolbar"
+        android:layout_alignEnd="@+id/accessusercontacttoolbar"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
+        android:background="@color/colorPrimaryDark"
+        android:baselineAlignBottom="false"
+        android:focusableInTouchMode="false"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/fullname" />
+
+    <!--<ImageButton-->
+        <!--android:id="@+id/gotocreateshadow"-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_below="@id/importBtn"-->
+        <!--android:layout_marginTop="529dp"-->
+        <!--android:layout_marginLeft="300dp"-->
+        <!--android:background="@color/colorPrimaryDark"-->
+        <!--android:baselineAlignBottom="true"-->
+        <!--android:focusableInTouchMode="false"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--app:srcCompat="@drawable/fullname" />-->
+
+</RelativeLayout>

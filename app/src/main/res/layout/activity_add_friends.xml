@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddFriendsActivity">
+
+    <include
+        android:id="@+id/addfriendsbar"
+        layout="@layout/appbarlayout"
+        ></include>
+
+
+
+    <RelativeLayout
+        android:id="@+id/searchlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/addfriendsbar"
+        android:layout_marginTop="10dp">
+        
+        <TextView
+            android:id="@+id/connecttext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="20dp"
+            android:text="Find friends to connect with"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            />
+        <EditText
+            android:id="@+id/inputsearchusers"
+            android:layout_width="260dp"
+            android:layout_height="65dp"
+            android:layout_below="@id/connecttext"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="9dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/inptfield"
+            android:ems="9"
+            android:hint="Search"
+            android:inputType="textMultiLine"
+            android:padding="9dp"
+            />
+
+        <ImageButton
+            android:id="@+id/btnsearch"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_below="@id/connecttext"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@id/inputsearchusers"
+            android:background="@drawable/inptfield"
+            android:scaleType="centerInside"
+            android:src="@drawable/searchicon" />
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/outputfromsearch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/searchlayout"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginBottom="9dp">
+
+    </android.support.v7.widget.RecyclerView>
+
+
+
+</RelativeLayout>

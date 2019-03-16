@@ -1,0 +1,146 @@
+package me.lovell.shadownetwork;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.text.TextUtils;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+
+public class SignInActivity extends AppCompatActivity {
+
+    private Button loginBtn;
+    private EditText usrEmail, usrPassword;
+    private TextView createAcntLink;
+    private FirebaseAuth menuAuth;
+    private ProgressDialog progressDisplay;
+    private TextView resetpassword;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sign_in);
+
+        menuAuth = FirebaseAuth.getInstance();
+
+        createAcntLink = (TextView) findViewById(R.id.loginCreate);
+        usrEmail = (EditText) findViewById(R.id.loginEmail);
+        usrPassword = (EditText) findViewById(R.id.loginPassword);
+        loginBtn = (Button) findViewById(R.id.loginBTN);
+        progressDisplay = new ProgressDialog(this);
+        resetpassword = (TextView) findViewById(R.id.resetpassword);
+
+        // send from text to sign up
+        createAcntLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signupActivity();
+            }
+        });
+
+        // button once user enters log in details
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logUserIn();
+            }
+        });
+
+        resetpassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetuserpassword();
+            }
+        });
+
+    }
+
+    private void resetuserpassword() {
+        Intent reset = new Intent(SignInActivity.this, PasswordResetActivity.class);
+        reset.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(reset);
+        finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseUser loggedinUser = menuAuth.getCurrentUser();
+
+        // if user already logged in, send to main feed screen
+        if(loggedinUser != null){
+
+            goToMain();
+
+        }
+
+    }
+
+    // takes field log in details and checks database
+    private void logUserIn() {
+
+        String signinEmail = usrEmail.getText().toString();
+        String signinPassword = usrPassword.getText().toString();
+
+        if(TextUtils.isEmpty(signinEmail))
+        {
+            Toast.makeText(this, "Enter email", Toast.LENGTH_SHORT).show();
+        }
+        else if(TextUtils.isEmpty(signinPassword)){
+            Toast.makeText(this, "Enter password", Toast.LENGTH_SHORT).show();
+        }
+        else{
+
+            progressDisplay.setTitle("Logging in");
+            progressDisplay.setMessage("This won't take long..");
+            progressDisplay.show();
+            progressDisplay.setCanceledOnTouchOutside(true);
+
+            menuAuth.signInWithEmailAndPassword(signinEmail, signinPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            // redirect to main logged in view
+                            goToMain();
+                            progressDisplay.dismiss();
+                        }
+                        else{
+                            String errMessage = task.getException().getMessage();
+                            Toast.makeText(SignInActivity.this, "Error signing in: " + errMessage, Toast.LENGTH_LONG).show();
+                            progressDisplay.dismiss();
+                        }
+                }
+            });
+
+        }
+    }
+
+    // redirect logged in user to main logged in view feed
+    private void goToMain() {
+        Intent goToMainIntent = new Intent(SignInActivity.this, MainActivity.class);
+        goToMainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(goToMainIntent);
+        finish();
+    }
+
+    // open the sign up view activity
+    private void signupActivity() {
+
+        Intent signupIntent = new Intent(SignInActivity.this, RegisteringActivity.class );
+        startActivity(signupIntent);
+        //finish();
+    }
+}

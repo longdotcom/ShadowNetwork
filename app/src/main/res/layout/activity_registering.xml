@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/loginbackground"
+    tools:context=".RegisteringActivity">
+
+    <include
+        android:id="@+id/regisbar"
+        layout="@layout/appbarlayout">
+
+    </include>
+
+    <ImageView
+        android:id="@+id/regIcon"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:layout_below="@id/regisbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        app:srcCompat="@drawable/mainlogo" />
+
+    <EditText
+        android:id="@+id/regEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/regIcon"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/inptfield"
+        android:drawableLeft="@drawable/emailicon"
+        android:ems="10"
+        android:hint="Email address"
+        android:inputType="textEmailAddress"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/regPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/regEmail"
+        android:layout_marginTop="9dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/inptfield"
+        android:drawableLeft="@drawable/passwordicon"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:padding="8dp" />
+
+    <EditText
+        android:id="@+id/regConfirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/regPassword"
+        android:layout_marginTop="9dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/inptfield"
+        android:drawableLeft="@drawable/passwordicon"
+        android:ems="10"
+        android:hint="Re-enter password"
+        android:inputType="textPassword"
+        android:padding="8dp" />/>
+
+    <Button
+        android:id="@+id/regSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/regConfirm"
+        android:layout_marginTop="27dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/buttons"
+        android:padding="14dp"
+        android:text="Sign Up"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+</RelativeLayout>

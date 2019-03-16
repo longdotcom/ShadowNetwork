@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreatePostActivty">
+
+    <include
+        android:id="@+id/uppsttlbr"
+        layout="@layout/appbarlayout"></include>
+
+    <ImageButton
+        android:id="@+id/addimg"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_below="@+id/uppsttlbr"
+        android:layout_marginTop="49dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/select_image" />
+
+    <EditText
+        android:id="@+id/addtext"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/addimg"
+        android:layout_marginTop="43dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/inptfield"
+        android:ems="10"
+        android:hint="Add text to image post"
+        android:inputType="textMultiLine" />
+
+    <Button
+        android:id="@+id/addpost"
+        android:layout_width="300dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/addtext"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="57dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="54dp"
+        android:background="@drawable/buttons"
+        android:text="Add Image Post"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ShadowNetwork</string>
+    <string name="open">Drawer Open</string>
+    <string name="close">Drawer Close</string>
+    <string name="home">Home</string>
+    <string name="friends">Friends</string>
+    <string name="logout">Logout</string>
+    <string name="settings">Settings</string>
+    <string name="messages">Messages</string>
+    <string name="find_friends">Find Friends</string>
+    <string name="textview">TextView</string>
+    <string name="userName">Username</string>
+    <string name="username">Username</string>
+    <string name="title_activity_access_user_contacts">AccessUserContactsActivity</string>
+</resources>

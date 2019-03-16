@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="150dp"
+    android:background="@drawable/header">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/navBarPrImg"
+        android:layout_width="99dp"
+        android:layout_height="99dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="84dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/profile_img"
+        app:civ_border_color="@color/colorPrimaryDark"
+        app:civ_border_width="2dp" />
+
+    <TextView
+        android:id="@+id/navUsrName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/navBarPrImg"
+        android:layout_alignStart="@+id/navBarPrImg"
+        android:layout_alignEnd="@+id/navBarPrImg"
+        android:layout_marginTop="3dp"
+        android:text="Username"
+        android:textAlignment="center"
+        android:textColor="@android:color/background_light"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="Username" />
+
+</RelativeLayout>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditProfileActivity">
+
+    <include
+        android:id="@+id/edittoolbr"
+        layout="@layout/appbarlayout">
+
+    </include>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/edittoolbr">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/editimage"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/profile_img" />
+            <EditText
+                android:id="@+id/editstatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editimage"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:background="@drawable/inptfield"
+                android:hint="Edit status"
+                android:padding="20dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/editusername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editstatus"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/inptfield"
+                android:hint="Edit username"
+                android:padding="13dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/editname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editusername"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/inptfield"
+                android:hint="Edit name"
+                android:padding="13dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+            android:id="@+id/editlocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editname"
+            android:layout_marginTop="7dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+            android:background="@drawable/inptfield"
+            android:hint="Edit country"
+            android:padding="13dp"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
+
+            <EditText
+                android:id="@+id/editbirth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editlocation"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/inptfield"
+                android:hint="Edit D.O.B"
+                android:padding="13dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/editgender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editbirth"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/inptfield"
+                android:hint="Edit gender"
+                android:padding="13dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/editrelation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/editgender"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/inptfield"
+                android:hint="Edit relationship status"
+                android:padding="13dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                />
+
+            <Button
+                android:id="@+id/editbtn"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_below="@id/editrelation"
+                android:text="Save profile details"
+                android:layout_margin="19dp"
+                android:background="@drawable/buttons"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                />
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>
