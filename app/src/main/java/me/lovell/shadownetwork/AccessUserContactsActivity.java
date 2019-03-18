@@ -155,12 +155,9 @@ public class AccessUserContactsActivity extends AppCompatActivity {
                                                         @Override
                                                         public void onComplete(@NonNull Task task) {
                                                             if(task.isSuccessful()) {
-                                                                //goToNewsFeed();
-                                                                //Toast.makeText(AccessUserContactsActivity.this, "Success.", Toast.LENGTH_SHORT).show();
-                                                                // progressBar.dismiss();
+
                                                             } else {
                                                                 Toast.makeText(AccessUserContactsActivity.this, "Error.", Toast.LENGTH_SHORT).show();
-                                                                //progressBar.dismiss();
                                                             }
                                                         }
                                                     });
