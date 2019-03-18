@@ -68,10 +68,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(menuToolbar);
         getSupportActionBar().setTitle("Home");
 
-
         // main view in activity main
         layoutdrw = (DrawerLayout) findViewById(R.id.drawableLayout);
-
         // hamburger menu for left sided menu
         toggleBar = new ActionBarDrawerToggle(MainActivity.this, layoutdrw, R.string.open, R.string.close);
         layoutdrw.addDrawerListener(toggleBar);
@@ -79,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // nav menu side bar
         nvVw = (NavigationView) findViewById(R.id.nvVw);
-
-
         // list view populate
         usrPostList = (RecyclerView) findViewById(R.id.userPostList);
         usrPostList.setHasFixedSize(true);
@@ -88,15 +84,11 @@ public class MainActivity extends AppCompatActivity {
         managerLayoutLinear.setReverseLayout(true);
         managerLayoutLinear.setStackFromEnd(true);
         usrPostList.setLayoutManager(managerLayoutLinear);
-
-
         // add header to nav side swipe bar
         View naviView = nvVw.inflateHeaderView(R.layout.navheader);
-
         // left side bar logged in user details
         picNavBar = (CircleImageView) naviView.findViewById(R.id.navBarPrImg);
         usrNameNavBar = (TextView) naviView.findViewById(R.id.navUsrName);
-
 
         // set side menu bar image and name
         loggedInRef.child(crnUsr).addValueEventListener(new ValueEventListener() {
@@ -107,61 +99,80 @@ public class MainActivity extends AppCompatActivity {
                     if(dataSnapshot.hasChild("full_name")){
                         String fl_name = dataSnapshot.child("full_name").getValue().toString();
                         usrNameNavBar.setText(fl_name);
-
                     }
                     if(dataSnapshot.hasChild("profile_image")){
                         String prfimg = dataSnapshot.child("profile_image").getValue().toString();
                         Picasso.with(MainActivity.this).load(prfimg).placeholder(R.drawable.profile_img).into(picNavBar);
-
                     }
-                    else{
-
-                    }
-
+                    else{ }
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
         // listener for clicks within side swipe menu
         nvVw.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch(menuItem.getItemId())
+                {
+                    case R.id.navPost:
+                        Intent goToCreatePostActivity = new Intent(MainActivity.this, CreatePostActivty.class);
+                        startActivity(goToCreatePostActivity);
+                        finish();
+                        break;
 
-                usrMnuSlct(menuItem);
+                    case R.id.navProfile:
+                        Intent myprofileIntent = new Intent(MainActivity.this, UserProfileActivity.class);
+                        startActivity(myprofileIntent);
+                        finish();
+                        break;
+
+                    case R.id.navFriends:
+                        Intent gotofriendslist = new Intent(MainActivity.this, FriendListActivity.class);
+                        startActivity(gotofriendslist);
+                        finish();
+                        break;
+
+                    case R.id.navFindFriends:
+                        Intent findfriends = new Intent(MainActivity.this, AccessUserContactsActivity.class);
+                        startActivity(findfriends);
+                        finish();
+                        break;
+
+                    case R.id.navSettings:
+                        Intent editprofile = new Intent(MainActivity.this, EditProfileActivity.class);
+                        startActivity(editprofile);
+                        finish();
+                        break;
+
+                    case R.id.navLogout:
+                        menuAuth.signOut();
+                        Intent signinIntent = new Intent(MainActivity.this, SignInActivity.class);
+                        startActivity(signinIntent);
+                        finish();
+                        break;
+
+                    case R.id.createShadow:
+                        Intent createshadowintent = new Intent(MainActivity.this, CreateShadowProfileActivity.class);
+                        startActivity(createshadowintent);
+                        finish();
+                        break;
+                }
+
                 return false;
             }
         });
-
         // top right new post button
-
-
-        showUsrsPsts();
-    }
-
-    // Adapter for listview to populate news feed with users posts
-    private void showUsrsPsts() {
-
         Query newsFeedOrderedNewest = refPst.orderByChild("newsFeedOrderedNewest");
-
         FirebaseRecyclerAdapter<Posts, ViewPostHandler> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Posts, ViewPostHandler>
                 (
-
-                Posts.class,
-                R.layout.layoutposts,
-                ViewPostHandler.class,
-                        newsFeedOrderedNewest
-
-
-        ) {
+                        Posts.class, R.layout.layoutposts, ViewPostHandler.class, newsFeedOrderedNewest
+                ) {
             @Override
             protected void populateViewHolder(ViewPostHandler viewHolder, Posts model, int position) {
-
                 final String idStatus = getRef(position).getKey();
-
                 viewHolder.setFullName(model.getFullname());
                 viewHolder.setTime(model.getTime());
                 viewHolder.setDate(model.getDate());
@@ -181,21 +192,19 @@ public class MainActivity extends AppCompatActivity {
         };
         usrPostList.setAdapter(firebaseRecyclerAdapter);
     }
+    // Adapter for listview to populate news feed with users posts
 
     // For recycle view to display users posts on news feed
     public static class ViewPostHandler extends RecyclerView.ViewHolder{
         View viewM;
-
         public ViewPostHandler(View viewItem){
             super(viewItem);
             viewM = viewItem;
         }
-
         public void setFullName(String fullName){
             TextView username = (TextView) viewM.findViewById(R.id.name_profile_post);
             username.setText(fullName);
         }
-
         public void setProfileimage(Context cntx, String profileimage){
             CircleImageView image = (CircleImageView) viewM.findViewById(R.id.image_profile_post);
             Picasso.with(cntx).load(profileimage).into(image);
@@ -217,59 +226,38 @@ public class MainActivity extends AppCompatActivity {
             Picasso.with(cntx2).load(postimage).into(ImagePost);
         }
     }
-
-
-
     //check users logged in or not on start
     @Override
     protected void onStart() {
         super.onStart();
-
         FirebaseUser loggedinUser = menuAuth.getCurrentUser();
-
         // if user not signed in, send them to sign up home/start screen
         if(loggedinUser == null){
-
-            signInActivity();
-
+            Intent signinIntent = new Intent(MainActivity.this, SignInActivity.class);
+            startActivity(signinIntent);
+            finish();
         }
         else{
-
         // user signed in, validate them and allow to set up profile
-            userChecker();
-
+            final String signedInUserId = menuAuth.getCurrentUser().getUid();
+            loggedInRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    // set up account profile
+                    if(!dataSnapshot.hasChild(signedInUserId)){
+                        Intent createActivityIntent = new Intent(MainActivity.this,  CreateActivity.class);
+                        startActivity(createActivityIntent);
+                        finish();
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) { }
+            });
         }
     }
 
-    // check user ID when already signed in
-    private void userChecker() {
-
-        final String signedInUserId = menuAuth.getCurrentUser().getUid();
-
-        loggedInRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            // set up account profile
-                if(!dataSnapshot.hasChild(signedInUserId)){
-                    createActivityForUser();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-
-
-    // hamburger menu selected
-    // when clicked will drag the left nav bar over
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         if(toggleBar.onOptionsItemSelected(item))
         {
             return true;
@@ -277,102 +265,5 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // action performed for clicked side swipe menu, for intent and new views
-    private void usrMnuSlct(MenuItem menuItem) {
-
-        switch(menuItem.getItemId())
-        {
-            case R.id.navPost:
-                createPostActivity();
-                break;
-
-            case R.id.navProfile:
-                goToMyProfile();
-                break;
-
-            case R.id.navFriends:
-                listFriends();
-                break;
-
-            case R.id.navFindFriends:
-                findfriends();
-                break;
-
-            case R.id.navSettings:
-                editprofile();
-                break;
-
-            case R.id.navLogout:
-                menuAuth.signOut();
-                signInActivity();
-                break;
-
-            case R.id.createShadow:
-                createshadow();
-                break;
-        }
-
-    }
-
-    private void createshadow() {
-        Intent createshadowintent = new Intent(MainActivity.this, CreateShadowProfileActivity.class);
-        startActivity(createshadowintent);
-        finish();
-    }
-
-
-    // redirecr user to sign in if not logged in
-    private void listFriends() {
-
-        Intent gotofriendslist = new Intent(MainActivity.this, FriendListActivity.class);
-        startActivity(gotofriendslist);
-        finish();
-
-    }
-
-    private void createPostActivity() {
-        Intent goToCreatePostActivity = new Intent(MainActivity.this, CreatePostActivty.class);
-        startActivity(goToCreatePostActivity);
-        finish();
-    }
-
-    // redirecr user to sign in if not logged in
-    private void signInActivity() {
-
-        Intent signinIntent = new Intent(MainActivity.this, SignInActivity.class);
-
-        startActivity(signinIntent);
-        finish();
-
-    }
-
-    private void goToMyProfile() {
-        Intent myprofileIntent = new Intent(MainActivity.this, UserProfileActivity.class);
-        startActivity(myprofileIntent);
-        finish();
-    }
-
-    private void editprofile() {
-
-        Intent editprofile = new Intent(MainActivity.this, EditProfileActivity.class);
-        startActivity(editprofile);
-        finish();
-
-    }
-
-    private void findfriends() {
-
-        Intent findfriends = new Intent(MainActivity.this, AccessUserContactsActivity.class);
-        startActivity(findfriends);
-        finish();
-
-    }
-
-    // signed in user redirected to set up profile attributes
-    private void createActivityForUser() {
-        Intent createActivityIntent = new Intent(MainActivity.this,  CreateActivity.class);
-        startActivity(createActivityIntent);
-        finish();
-    }
 
 }

@@ -51,9 +51,6 @@ public class EditProfileActivity extends AppCompatActivity {
     private CircleImageView editimg;
     private ProgressDialog progressBar;
     private StorageReference picRefMember;
-
-
-
     private DatabaseReference editdb;
     private FirebaseAuth menuAuth;
     private String loggedinUsr;
@@ -64,12 +61,10 @@ public class EditProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
-
         menuAuth = FirebaseAuth.getInstance();
         loggedinUsr = menuAuth.getCurrentUser().getUid();
         editdb = FirebaseDatabase.getInstance().getReference().child("Users").child(loggedinUsr);
         picRefMember = FirebaseStorage.getInstance().getReference().child("Profile Images");
-
         menuBar = (Toolbar) findViewById(R.id.edittoolbr);
         setSupportActionBar(menuBar);
         getSupportActionBar().setTitle("Edit profile");
@@ -84,9 +79,6 @@ public class EditProfileActivity extends AppCompatActivity {
         editbtn = (Button) findViewById(R.id.editbtn);
         editimg = (CircleImageView) findViewById(R.id.editimage);
         progressBar = new ProgressDialog(this);
-
-
-
         editdb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -99,9 +91,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     String editgenderstr = dataSnapshot.child("gender").getValue().toString();
                     String editrelationstr = dataSnapshot.child("relationshipStatus").getValue().toString();
                     String editlocatestr = dataSnapshot.child("locationCountry").getValue().toString();
-
                     Picasso.with(EditProfileActivity.this).load(editimgstr).placeholder(R.drawable.profile_img).into(editimg);
-
                     editusrname.setText(editusrnmestr);
                     editname.setText(editnamestr);
                     editrelationship.setText(editrelationstr);
@@ -109,25 +99,68 @@ public class EditProfileActivity extends AppCompatActivity {
                     editdob.setText(editbirthstr);
                     editlocation.setText(editlocatestr);
                     editstatus.setText(editstatusstr);
-
-
-
                 }
             }
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) { }
         });
-
         editbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkUsrAccnt();
+                String newusrnme = editusrname.getText().toString();
+                String newname = editname.getText().toString();
+                String newrelation = editrelationship.getText().toString();
+                String newgender = editgender.getText().toString();
+                String newdob = editdob.getText().toString();
+                String newlocation = editlocation.getText().toString();
+                String newstatus = editstatus.getText().toString();
+                if(TextUtils.isEmpty(newusrnme)){
+                    Toast.makeText(EditProfileActivity.this, "Enter new username", Toast.LENGTH_LONG).show();
+                }
+                else if(TextUtils.isEmpty(newname)){
+                    Toast.makeText(EditProfileActivity.this, "Enter new name", Toast.LENGTH_LONG).show();
+                }
+                else if(TextUtils.isEmpty(newrelation)){
+                    Toast.makeText(EditProfileActivity.this, "Enter relationship status", Toast.LENGTH_LONG).show();
+                }
+                else if(TextUtils.isEmpty(newgender)){
+                    Toast.makeText(EditProfileActivity.this, "Enter gender", Toast.LENGTH_LONG).show();
+                }
+                else if(TextUtils.isEmpty(newdob)){
+                    Toast.makeText(EditProfileActivity.this, "Enter date of birth", Toast.LENGTH_LONG).show();
+                }
+                else if(TextUtils.isEmpty(newlocation)){
+                    Toast.makeText(EditProfileActivity.this, "Enter location/country", Toast.LENGTH_LONG).show();
+                }
+                else if(TextUtils.isEmpty(newstatus)){
+                    Toast.makeText(EditProfileActivity.this, "Enter profile status", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    HashMap editMap = new HashMap();
+                    editMap.put("user_name", newusrnme);
+                    editMap.put("full_name", newname);
+                    editMap.put("relationshipStatus", newrelation);
+                    editMap.put("gender", newgender);
+                    editMap.put("dob", newdob);
+                    editMap.put("locationCountry", newlocation);
+                    editMap.put("profileStatus", newstatus);
+                    editdb.updateChildren(editMap).addOnCompleteListener(new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if(task.isSuccessful()){
+                                Intent goToMainIntent = new Intent(EditProfileActivity.this, MainActivity.class);
+                                goToMainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(goToMainIntent);
+                                finish();
+                                Toast.makeText(EditProfileActivity.this, "Details updated", Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(EditProfileActivity.this, "Error", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+                }
             }
         });
-
         editimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,7 +170,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 startActivityForResult(imageIntent, imageFromGal);
             }
         });
-
     }
 
     @Override
@@ -155,41 +187,31 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == imageFromGal && resultCode == RESULT_OK && data != null) {
             Uri picuri = data.getData();
-
             CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1, 1).start(this);
         }
-
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult imageRes = CropImage.getActivityResult(data);
-
             if (resultCode == RESULT_OK) {
                 Uri statusUri = imageRes.getUri();
-
                 StorageReference imglocation = picRefMember.child(loggedinUsr + ".jpg");
-
                 imglocation.putFile(statusUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(EditProfileActivity.this, "Picture uploaded successfully", Toast.LENGTH_LONG);
-
                             Task<Uri> getURIres = task.getResult().getMetadata().getReference().getDownloadUrl();
-
                             getURIres.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     final String retrieveUrl = uri.toString();
-
                                     editdb.child("profile_image").setValue(retrieveUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
                                                 Intent ownint = new Intent(EditProfileActivity.this, EditProfileActivity.class);
                                                 startActivity(ownint);
-
                                                 Toast.makeText(EditProfileActivity.this, "Success", Toast.LENGTH_LONG).show();
                                             } else {
                                                 String msgErr = task.getException().getMessage();
@@ -208,71 +230,5 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void checkUsrAccnt() {
-        String newusrnme = editusrname.getText().toString();
-        String newname = editname.getText().toString();
-        String newrelation = editrelationship.getText().toString();
-        String newgender = editgender.getText().toString();
-        String newdob = editdob.getText().toString();
-        String newlocation = editlocation.getText().toString();
-        String newstatus = editstatus.getText().toString();
 
-        if(TextUtils.isEmpty(newusrnme)){
-            Toast.makeText(this, "Enter new username", Toast.LENGTH_LONG).show();
-        }
-        else if(TextUtils.isEmpty(newname)){
-            Toast.makeText(this, "Enter new name", Toast.LENGTH_LONG).show();
-        }
-        else if(TextUtils.isEmpty(newrelation)){
-            Toast.makeText(this, "Enter relationship status", Toast.LENGTH_LONG).show();
-        }
-        else if(TextUtils.isEmpty(newgender)){
-            Toast.makeText(this, "Enter gender", Toast.LENGTH_LONG).show();
-        }
-        else if(TextUtils.isEmpty(newdob)){
-            Toast.makeText(this, "Enter date of birth", Toast.LENGTH_LONG).show();
-        }
-        else if(TextUtils.isEmpty(newlocation)){
-            Toast.makeText(this, "Enter location/country", Toast.LENGTH_LONG).show();
-        }
-        else if(TextUtils.isEmpty(newstatus)){
-            Toast.makeText(this, "Enter profile status", Toast.LENGTH_LONG).show();
-        }
-        else{
-            saveEditProfile(newusrnme, newname, newrelation, newgender, newdob, newlocation, newstatus);
-        }
-
-    }
-
-    private void saveEditProfile(String newusrnme, String newname, String newrelation, String newgender, String newdob, String newlocation, String newstatus) {
-        HashMap editMap = new HashMap();
-        editMap.put("user_name", newusrnme);
-        editMap.put("full_name", newname);
-        editMap.put("relationshipStatus", newrelation);
-        editMap.put("gender", newgender);
-        editMap.put("dob", newdob);
-        editMap.put("locationCountry", newlocation);
-        editMap.put("profileStatus", newstatus);
-        editdb.updateChildren(editMap).addOnCompleteListener(new OnCompleteListener() {
-            @Override
-            public void onComplete(@NonNull Task task) {
-
-                if(task.isSuccessful()){
-                    goToMain();
-                    Toast.makeText(EditProfileActivity.this, "Details updated", Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(EditProfileActivity.this, "Error", Toast.LENGTH_LONG).show();
-
-                }
-            }
-        });
-
-    }
-
-    private void goToMain() {
-        Intent goToMainIntent = new Intent(EditProfileActivity.this, MainActivity.class);
-        goToMainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(goToMainIntent);
-        finish();
-    }
 }

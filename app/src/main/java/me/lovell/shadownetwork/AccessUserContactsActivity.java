@@ -45,9 +45,7 @@ public class AccessUserContactsActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_READ_CONTACTS = 1;
     ImageButton importBtn = null;
    // ImageButton gotocreateshadow;
-
     private List<Contact> arrayContacts;
-
     private Integer count;
     private FirebaseAuth menuAuth;
     private String idCrntUser, userfullname;
@@ -56,23 +54,17 @@ public class AccessUserContactsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_access_user_contacts);
         Toolbar accessusercontacttoolbar = (Toolbar) findViewById(R.id.accessusercontacttoolbar);
         setSupportActionBar(accessusercontacttoolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Access Contacts");
-
         menuAuth = FirebaseAuth.getInstance();
         idCrntUser = menuAuth.getCurrentUser().getUid();
         refContacts = FirebaseDatabase.getInstance().getReference().child("Contacts");
-
-
         // GET CURRENT USERS FULL NAME TO APPEND TO SAVE CONTACTS AS IDENTIFER
         ReferenceUsr = FirebaseDatabase.getInstance().getReference().child("Users").child(idCrntUser);
-
         // When current user retrieved, access their name for db identifier of contact
         ReferenceUsr.addValueEventListener(new ValueEventListener() {
             @Override
@@ -83,14 +75,10 @@ public class AccessUserContactsActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) { }
         });
-
         contactNames = (ListView) findViewById(R.id.contactnames);
-
         int contactpermission = ContextCompat.checkSelfPermission(this, READ_CONTACTS);
-
         if(contactpermission != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] {READ_CONTACTS}, REQUEST_CODE_READ_CONTACTS); }
-
         importBtn = (ImageButton) findViewById(R.id.importBtn);
         importBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +91,6 @@ public class AccessUserContactsActivity extends AppCompatActivity {
                             null,
                             null,
                             ContactsContract.Contacts.DISPLAY_NAME_PRIMARY);
-
                                         // GRABS USERS CONTACTS FIELDS - NAME, EMAIL, PHONE
                                         // INTO ARRAY OF CONTACT OBJECTS
                                         arrayContacts = new ArrayList<Contact>();
@@ -112,31 +99,24 @@ public class AccessUserContactsActivity extends AppCompatActivity {
                                             String phoneNum ="";
                                             String emailAdd = "";
                                             String contactId = crsor.getString(crsor.getColumnIndex(ContactsContract.Contacts._ID));
-
                                             // Contacts name
                                             String name = crsor.getString(crsor.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
-
                                             Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ contactId,null, null);
                                             while (phones.moveToNext()) {
                                                 // Contacts number
                                                 phoneNum = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)); }
                                             phones.close();
-
                                             // Find Email Addresses
                                             Cursor emails = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + contactId,null, null);
                                             while (emails.moveToNext()) {
                                                 // Contacts email
                                                 emailAdd = emails.getString(emails.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA)); }
                                             emails.close();
-
                                             Log.d(TAG, "                    " + name + " " + phoneNum + " " + emailAdd);
-
                                             // Array of logged in users contacts
                                             arrayContacts.add(new Contact(name, phoneNum, emailAdd));
                                         }
                                         crsor.close();
-
-
                                         // LOOPS ARRAY AND STORES TO DB FOR CURRENT LOGGED IN USERS CONTACTS
                                         count = 0;
                                         for(Contact x: arrayContacts){
@@ -145,28 +125,20 @@ public class AccessUserContactsActivity extends AppCompatActivity {
                                             contactMap.put("name", x.getName());
                                             contactMap.put("email", x.getEmail());
                                             contactMap.put("phone", x.getPhone());
-
                                             // FOR EACH CONTACT SAVED UNDER LOGGED IN USERS NAME AND INCREMENT COUNT
                                             // For unique identifier of contacts belonging to who
-
                                             refContacts.child(userfullname +"-"+count.toString()).updateChildren(contactMap)
-
                                                     .addOnCompleteListener(new OnCompleteListener() {
                                                         @Override
                                                         public void onComplete(@NonNull Task task) {
                                                             if(task.isSuccessful()) {
-
                                                             } else {
                                                                 Toast.makeText(AccessUserContactsActivity.this, "Error.", Toast.LENGTH_SHORT).show();
                                                             }
                                                         }
                                                     });
-
                                             count++;
                                         }
-
-
-
                     if (cursor != null) {
                         List<String> contactsArray = new ArrayList<String>();
                         while (cursor.moveToNext()) {
@@ -174,23 +146,16 @@ public class AccessUserContactsActivity extends AppCompatActivity {
                         cursor.close();
                         ArrayAdapter<String> adapter = new ArrayAdapter<String>(AccessUserContactsActivity.this, R.layout.detail_contact, R.id.fullname, contactsArray);
                         contactNames.setAdapter(adapter);
-
                         Intent addfriends = new Intent(AccessUserContactsActivity.this, AddFriendsActivity.class);
                         startActivity(addfriends);
                         finish();
                     }
-
                 } else {
                     Snackbar.make(view, "Cannot access contacts", Snackbar.LENGTH_INDEFINITE);
-
                 }
-
             }
         });
-
-
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -202,7 +167,4 @@ public class AccessUserContactsActivity extends AppCompatActivity {
         }
         return true;
     }
-
-
-
 }

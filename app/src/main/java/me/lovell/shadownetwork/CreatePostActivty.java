@@ -58,226 +58,160 @@ public class CreatePostActivty extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post_activty);
-
-
         menuAuth = FirebaseAuth.getInstance();
         idCrntUser = menuAuth.getCurrentUser().getUid();
-
         imgPostRef = FirebaseStorage.getInstance().getReference();
         refUsr = FirebaseDatabase.getInstance().getReference().child("Users");
         refPost = FirebaseDatabase.getInstance().getReference().child("Posts");
-
-
         chooseImgPost = (ImageButton) findViewById(R.id.addimg);
         btnUpdatePosts = (Button) findViewById(R.id.addpost);
         usrDescPost =(EditText) findViewById(R.id.addtext);
         progressBar = new ProgressDialog(this);
-
-
         menuTlBar = (Toolbar) findViewById(R.id.uppsttlbr);
         setSupportActionBar(menuTlBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Update Post");
 
-
         chooseImgPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                galleryAction();
+                Intent galleryIntent = new Intent();
+                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent, img_picker);
             }
         });
-
 
         btnUpdatePosts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-                ValidatePostInfo();
-            }
-        });
-    }
+                desc = usrDescPost.getText().toString();
 
-
-
-    private void ValidatePostInfo()
-    {
-        desc = usrDescPost.getText().toString();
-
-        if(uriImg == null)
-        {
-            Toast.makeText(this, "Add a picture to your update", Toast.LENGTH_LONG).show();
-        }
-        else if(TextUtils.isEmpty(desc))
-        {
-            Toast.makeText(this, "Describe your picture", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            progressBar.setTitle("Create new update");
-            progressBar.setMessage("Your update is being added");
-            progressBar.show();
-            progressBar.setCanceledOnTouchOutside(true);
-
-            uploadToDB();
-        }
-    }
-
-
-
-    private void uploadToDB()
-    {
-        Calendar dateCalFord = Calendar.getInstance();
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
-        crntDateUpdate = currentDate.format(dateCalFord.getTime());
-
-        Calendar timeCalFord = Calendar.getInstance();
-        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
-        crntTimeUpdate = currentTime.format(dateCalFord.getTime());
-
-        randomName = crntDateUpdate + crntTimeUpdate;
-
-
-        final StorageReference filePath = imgPostRef.child("Post Images").child(uriImg.getLastPathSegment() + randomName + ".jpg");
-
-        filePath.putFile(uriImg).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-
-
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task)
-            {
-                if(task.isSuccessful())
+                if(uriImg == null)
                 {
-
-
-                    urlDownloader = task.getResult().getDownloadUrl().toString();
-                    //downloadUrl = filePath.getDownloadUrl().toString();
-                    Toast.makeText(CreatePostActivty.this, "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
-
-                    SavingPostInformationToDatabase();
-
+                    Toast.makeText(CreatePostActivty.this, "Add a picture to your update", Toast.LENGTH_LONG).show();
+                }
+                else if(TextUtils.isEmpty(desc))
+                {
+                    Toast.makeText(CreatePostActivty.this, "Describe your picture", Toast.LENGTH_LONG).show();
                 }
                 else
                 {
-                    String message = task.getException().getMessage();
-                    Toast.makeText(CreatePostActivty.this, "Error occured: " + message, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
+                    progressBar.setTitle("Create new update");
+                    progressBar.setMessage("Your update is being added");
+                    progressBar.show();
+                    progressBar.setCanceledOnTouchOutside(true);
+                    Calendar dateCalFord = Calendar.getInstance();
+                    SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
+                    crntDateUpdate = currentDate.format(dateCalFord.getTime());
+                    Calendar timeCalFord = Calendar.getInstance();
+                    SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
+                    crntTimeUpdate = currentTime.format(dateCalFord.getTime());
+                    randomName = crntDateUpdate + crntTimeUpdate;
 
+                    final StorageReference filePath = imgPostRef.child("Post Images").child(uriImg.getLastPathSegment() + randomName + ".jpg");
 
+                    filePath.putFile(uriImg).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
 
-
-    private void SavingPostInformationToDatabase()
-    {
-        refPost.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    newsFeedOrderedNewest = dataSnapshot.getChildrenCount();
-                }
-                else{
-                    newsFeedOrderedNewest = 0;
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        refUsr.child(idCrntUser).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
-                    final String userFullName = dataSnapshot.child("full_name").getValue().toString();
-                    final String userProfileImage = dataSnapshot.child("profile_image").getValue().toString();
-
-                    HashMap postsMap = new HashMap();
-                    postsMap.put("uid", idCrntUser);
-                    postsMap.put("date", crntDateUpdate);
-                    postsMap.put("time", crntTimeUpdate);
-                    postsMap.put("description", desc);
-                    postsMap.put("postimage", urlDownloader);
-                    postsMap.put("profileimage", userProfileImage);
-                    postsMap.put("fullname", userFullName);
-                    postsMap.put("newsFeedOrderedNewest", newsFeedOrderedNewest);
-                    refPost.child(idCrntUser + randomName).updateChildren(postsMap)
-                            .addOnCompleteListener(new OnCompleteListener() {
-                                @Override
-                                public void onComplete(@NonNull Task task)
-                                {
-                                    if(task.isSuccessful())
-                                    {
-                                        goToNewsFeed();
-                                        Toast.makeText(CreatePostActivty.this, "New Post is updated successfully.", Toast.LENGTH_SHORT).show();
-                                        progressBar.dismiss();
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task)
+                        {
+                            if(task.isSuccessful())
+                            {
+                                urlDownloader = task.getResult().getDownloadUrl().toString();
+                                //downloadUrl = filePath.getDownloadUrl().toString();
+                                Toast.makeText(CreatePostActivty.this, "image uploaded successfully to Storage...", Toast.LENGTH_SHORT).show();
+                                refPost.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        if(dataSnapshot.exists()){
+                                            newsFeedOrderedNewest = dataSnapshot.getChildrenCount();
+                                        }
+                                        else{
+                                            newsFeedOrderedNewest = 0;
+                                        }
                                     }
-                                    else
-                                    {
-                                        Toast.makeText(CreatePostActivty.this, "Error Occured while updating your post.", Toast.LENGTH_SHORT).show();
-                                        progressBar.dismiss();
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
                                     }
-                                }
-                            });
+                                });
+                                refUsr.child(idCrntUser).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot)
+                                    {
+                                        if(dataSnapshot.exists())
+                                        {
+                                            final String userFullName = dataSnapshot.child("full_name").getValue().toString();
+                                            final String userProfileImage = dataSnapshot.child("profile_image").getValue().toString();
+                                            HashMap postsMap = new HashMap();
+                                            postsMap.put("uid", idCrntUser);
+                                            postsMap.put("date", crntDateUpdate);
+                                            postsMap.put("time", crntTimeUpdate);
+                                            postsMap.put("description", desc);
+                                            postsMap.put("postimage", urlDownloader);
+                                            postsMap.put("profileimage", userProfileImage);
+                                            postsMap.put("fullname", userFullName);
+                                            postsMap.put("newsFeedOrderedNewest", newsFeedOrderedNewest);
+                                            refPost.child(idCrntUser + randomName).updateChildren(postsMap)
+                                                    .addOnCompleteListener(new OnCompleteListener() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task task)
+                                                        {
+                                                            if(task.isSuccessful())
+                                                            {
+                                                                Intent mainIntent = new Intent(CreatePostActivty.this, MainActivity.class);
+                                                                startActivity(mainIntent);
+                                                            }
+                                                            else
+                                                            {
+                                                                Toast.makeText(CreatePostActivty.this, "Error Occured while updating your post.", Toast.LENGTH_SHORT).show();
+                                                                progressBar.dismiss();
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) { }
+                                });
+                            }
+                            else
+                            {
+                                String message = task.getException().getMessage();
+                                Toast.makeText(CreatePostActivty.this, "Error occured: " + message, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
-
-
-
-    private void galleryAction()
-    {
-        Intent galleryIntent = new Intent();
-        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-        galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent, img_picker);
-    }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-
         if(requestCode==img_picker && resultCode==RESULT_OK && data!=null)
         {
             uriImg = data.getData();
             chooseImgPost.setImageURI(uriImg);
         }
     }
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
         int id = item.getItemId();
-
         if(id == android.R.id.home)
         {
-            goToNewsFeed();
+            Intent mainIntent = new Intent(CreatePostActivty.this, MainActivity.class);
+            startActivity(mainIntent);
         }
-
         return super.onOptionsItemSelected(item);
     }
 
-
-
-    private void goToNewsFeed()
-    {
-        Intent mainIntent = new Intent(CreatePostActivty.this, MainActivity.class);
-        startActivity(mainIntent);
-    }
 }

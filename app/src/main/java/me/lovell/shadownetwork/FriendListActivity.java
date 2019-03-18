@@ -39,12 +39,10 @@ public class FriendListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
-
         menuAuth = FirebaseAuth.getInstance();
         loggedInUsrId = menuAuth.getCurrentUser().getUid();
         RefOfFrnd = FirebaseDatabase.getInstance().getReference().child("Friends").child(loggedInUsrId);
         RefOfUsr = FirebaseDatabase.getInstance().getReference().child("Users");
-
         frndlistbar = (Toolbar) findViewById(R.id.frndlistbar);
         setSupportActionBar(frndlistbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -57,57 +55,27 @@ public class FriendListActivity extends AppCompatActivity {
         linearLayoutManager.setStackFromEnd(true);
         ListOfFrnds.setLayoutManager(linearLayoutManager);
 
-        showUsrsFriends();
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
-                break;
-        }
-        return true;
-    }
-
-    private void showUsrsFriends() {
         FirebaseRecyclerAdapter<Friend, FriendViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Friend, FriendViewHolder>(
-
-                Friend.class,
-                R.layout.foundfriends,
-                FriendViewHolder.class,
-                RefOfFrnd
-
+                Friend.class, R.layout.foundfriends, FriendViewHolder.class, RefOfFrnd
         ) {
             @Override
             protected void populateViewHolder(final FriendViewHolder viewHolder, Friend model, int position) {
-
                 viewHolder.setDate(model.getDate());
-
                 final String iDofUsr = getRef(position).getKey();
-
                 RefOfUsr.child(iDofUsr).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists()){
                             final String full_name = dataSnapshot.child("full_name").getValue().toString();
                             final String profile_image = dataSnapshot.child("profile_image").getValue().toString();
-
                             viewHolder.setFull_name(full_name);
                             viewHolder.setProfile_image(getApplicationContext(), profile_image);
-
                             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    CharSequence options[] = new CharSequence[]{
-                                            full_name + "'s Profile",
-                                    };
+                                    CharSequence options[] = new CharSequence[]{full_name + "'s Profile",};
                                     AlertDialog.Builder builder = new AlertDialog.Builder(FriendListActivity.this);
                                     builder.setTitle("View profile");
-
                                     builder.setItems(options, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
@@ -123,25 +91,32 @@ public class FriendListActivity extends AppCompatActivity {
                             });
                         }
                     }
-
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
+                    public void onCancelled(DatabaseError databaseError) { }
                 });
             }
         };
-
         ListOfFrnds.setAdapter(firebaseRecyclerAdapter);
     }
 
-    public static class FriendViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+        }
+        return true;
+    }
 
+
+    public static class FriendViewHolder extends RecyclerView.ViewHolder{
         View mView;
         public FriendViewHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView;
-
         }
 
         public void setProfile_image(Context cntx, String profile_image){

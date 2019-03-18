@@ -40,8 +40,6 @@ public class AddFriendProfileActivity extends AppCompatActivity {
     private Button reqFrndSndBtn;
     private Button reqFrndDecBtn;
     private Toolbar addfriendsprofilebar;
-
-
     private DatabaseReference ReferenceFrndReq;
     private DatabaseReference ReferenceUsr;
     private DatabaseReference ReferenceFrnd;
@@ -55,24 +53,29 @@ public class AddFriendProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend_profile);
-
-
-
         menuAuth = FirebaseAuth.getInstance();
         idOfSndr = menuAuth.getCurrentUser().getUid();
-
         idOfRecr = getIntent().getExtras().get("foundTheUser").toString();
         ReferenceUsr = FirebaseDatabase.getInstance().getReference().child("Users");
         ReferenceFrndReq = FirebaseDatabase.getInstance().getReference().child("PendingRequests");
         ReferenceFrnd = FirebaseDatabase.getInstance().getReference().child("Friends");
-
         addfriendsprofilebar = (Toolbar) findViewById(R.id.addfriendsprofilebar);
         setSupportActionBar(addfriendsprofilebar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Add Friend");
+        addstatus = (TextView) findViewById(R.id.addfriendstatus);
+        addusername = (TextView) findViewById(R.id.addfriendusername);
+        addname = (TextView) findViewById(R.id.addfriendfullname);
+        addlocation = (TextView) findViewById(R.id.addfriendlocation);
+        adddob = (TextView) findViewById(R.id.addfrienddob);
+        addgender = (TextView) findViewById(R.id.addfriendgender);
+        addrelationship = (TextView) findViewById(R.id.addfriendrelationstatus);
+        addprfleimg = (CircleImageView) findViewById(R.id.addfriendprflepic);
+        reqFrndSndBtn = (Button) findViewById(R.id.addfriendbtn);
+        reqFrndDecBtn = (Button) findViewById(R.id.declinefriendbtn);
 
-        CreateUIelements();
+        STATUS = "notadded";
 
         ReferenceUsr.child(idOfRecr).addValueEventListener(new ValueEventListener() {
             @Override
@@ -86,9 +89,7 @@ public class AddFriendProfileActivity extends AppCompatActivity {
                     String mygenderstr = dataSnapshot.child("gender").getValue().toString();
                     String myrelationstr = dataSnapshot.child("relationshipStatus").getValue().toString();
                     String mylocatestr = dataSnapshot.child("locationCountry").getValue().toString();
-
                     Picasso.with(AddFriendProfileActivity.this).load(myimgstr).placeholder(R.drawable.profile_img).into(addprfleimg);
-
                     addusername.setText(myusrnmestr);
                     addname.setText(mynamestr);
                     addrelationship.setText("Relationship status: " + myrelationstr);
@@ -96,37 +97,178 @@ public class AddFriendProfileActivity extends AppCompatActivity {
                     adddob.setText("D.O.B: " + mybirthstr);
                     addlocation.setText("Location: " + mylocatestr);
                     addstatus.setText(mystatusstr);
-
-                    BtnControl();
+                    ReferenceFrndReq.child(idOfSndr).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.hasChild(idOfRecr)) {
+                                String typeofrequest = dataSnapshot.child(idOfRecr).child("typeofrequest").getValue().toString();
+                                if (typeofrequest.equals("sending")) {
+                                    STATUS = "sendingrequest";
+                                    reqFrndSndBtn.setText("Cancel friend request");
+                                    reqFrndDecBtn.setVisibility(View.INVISIBLE);
+                                    reqFrndDecBtn.setEnabled(false);
+                                }
+                                else if(typeofrequest.equals("receiving")){
+                                    STATUS = "receivingrequest";
+                                    reqFrndSndBtn.setText("Accept friend");
+                                    reqFrndDecBtn.setVisibility(View.VISIBLE);
+                                    reqFrndDecBtn.setEnabled(true);
+                                    reqFrndDecBtn.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            ReferenceFrndReq.child(idOfSndr).child(idOfRecr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        ReferenceFrndReq.child(idOfRecr).child(idOfSndr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    reqFrndSndBtn.setEnabled(true);
+                                                                    STATUS = "notadded";
+                                                                    reqFrndSndBtn.setText("Send friendship request");
+                                                                    reqFrndDecBtn.setVisibility(View.INVISIBLE);
+                                                                    reqFrndDecBtn.setEnabled(false);
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                }else{
+                                    ReferenceFrnd.child(idOfSndr).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.hasChild(idOfRecr)){
+                                                STATUS = "addedfriends";
+                                                reqFrndSndBtn.setText("Unfriend");
+                                                reqFrndDecBtn.setVisibility(View.INVISIBLE);
+                                                reqFrndDecBtn.setEnabled(false);
+                                            }
+                                        }
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) { }
+                                    });
+                                }
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) { }
+                    });
                 }
             }
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) { }
         });
-
         reqFrndDecBtn.setVisibility(View.INVISIBLE);
         reqFrndDecBtn.setEnabled(false);
-
         if (!idOfSndr.equals(idOfRecr)) {
             reqFrndSndBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     reqFrndSndBtn.setEnabled(false);
-
                     if (STATUS.equals("notadded")) {
-                        RequestFriend();
+                        ReferenceFrndReq.child(idOfSndr).child(idOfRecr).child("typeofrequest").setValue("sending").addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    ReferenceFrndReq.child(idOfRecr).child(idOfSndr).child("typeofrequest").setValue("receiving").addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                reqFrndSndBtn.setEnabled(true);
+                                                STATUS = "sendingrequest";
+                                                reqFrndSndBtn.setText("Cancel friend request");
+                                                reqFrndDecBtn.setVisibility(View.INVISIBLE);
+                                                reqFrndDecBtn.setEnabled(false);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
                     if (STATUS.equals("sendingrequest")) {
-                        FriendCncl();
+                        ReferenceFrndReq.child(idOfSndr).child(idOfRecr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    ReferenceFrndReq.child(idOfRecr).child(idOfSndr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                reqFrndSndBtn.setEnabled(true);
+                                                STATUS = "notadded";
+                                                reqFrndSndBtn.setText("Send friendship request");
+                                                reqFrndDecBtn.setVisibility(View.INVISIBLE);
+                                                reqFrndDecBtn.setEnabled(false);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
                     if(STATUS.equals("receivingrequest")){
-                        FrndAcceptReq();
+                        Calendar todayCal = Calendar.getInstance();
+                        SimpleDateFormat todayDate = new SimpleDateFormat("dd-MM-yyyy");
+                        getDate = todayDate.format(todayCal.getTime());
+                        ReferenceFrnd.child(idOfSndr).child(idOfRecr).child("date").setValue(getDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    ReferenceFrnd.child(idOfRecr).child(idOfSndr).child("date").setValue(getDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                ReferenceFrndReq.child(idOfSndr).child(idOfRecr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            ReferenceFrndReq.child(idOfRecr).child(idOfSndr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    if (task.isSuccessful()) {
+                                                                        reqFrndSndBtn.setEnabled(true);
+                                                                        STATUS = "addedfriends";
+                                                                        reqFrndSndBtn.setText("Unfriend ");
+                                                                        reqFrndDecBtn.setVisibility(View.INVISIBLE);
+                                                                        reqFrndDecBtn.setEnabled(false);
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
                     if(STATUS.equals("addedfriends")){
-                        RequestUnfriend();
+                        ReferenceFrnd.child(idOfSndr).child(idOfRecr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    ReferenceFrnd.child(idOfRecr).child(idOfSndr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                reqFrndSndBtn.setEnabled(true);
+                                                STATUS = "notadded";
+                                                reqFrndSndBtn.setText("Send friendship request");
+                                                reqFrndDecBtn.setVisibility(View.INVISIBLE);
+                                                reqFrndDecBtn.setEnabled(false);
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
                     }
                 }
             });
@@ -134,9 +276,6 @@ public class AddFriendProfileActivity extends AppCompatActivity {
             reqFrndDecBtn.setVisibility(View.INVISIBLE);
             reqFrndSndBtn.setVisibility(View.INVISIBLE);
         }
-
-
-
     }
 
     @Override
@@ -151,184 +290,4 @@ public class AddFriendProfileActivity extends AppCompatActivity {
         return true;
     }
 
-
-    private void RequestUnfriend() {
-        ReferenceFrnd.child(idOfSndr).child(idOfRecr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    ReferenceFrnd.child(idOfRecr).child(idOfSndr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                reqFrndSndBtn.setEnabled(true);
-                                STATUS = "notadded";
-                                reqFrndSndBtn.setText("Send friendship request");
-                                reqFrndDecBtn.setVisibility(View.INVISIBLE);
-                                reqFrndDecBtn.setEnabled(false);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
-    }
-
-    private void FrndAcceptReq() {
-        Calendar todayCal = Calendar.getInstance();
-        SimpleDateFormat todayDate = new SimpleDateFormat("dd-MM-yyyy");
-        getDate = todayDate.format(todayCal.getTime());
-
-        ReferenceFrnd.child(idOfSndr).child(idOfRecr).child("date").setValue(getDate).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful()){
-                    ReferenceFrnd.child(idOfRecr).child(idOfSndr).child("date").setValue(getDate).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                ReferenceFrndReq.child(idOfSndr).child(idOfRecr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            ReferenceFrndReq.child(idOfRecr).child(idOfSndr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        reqFrndSndBtn.setEnabled(true);
-                                                        STATUS = "addedfriends";
-                                                        reqFrndSndBtn.setText("Unfriend ");
-                                                        reqFrndDecBtn.setVisibility(View.INVISIBLE);
-                                                        reqFrndDecBtn.setEnabled(false);
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    private void FriendCncl() {
-        ReferenceFrndReq.child(idOfSndr).child(idOfRecr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    ReferenceFrndReq.child(idOfRecr).child(idOfSndr).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                reqFrndSndBtn.setEnabled(true);
-                                STATUS = "notadded";
-                                reqFrndSndBtn.setText("Send friendship request");
-                                reqFrndDecBtn.setVisibility(View.INVISIBLE);
-                                reqFrndDecBtn.setEnabled(false);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    private void BtnControl() {
-        ReferenceFrndReq.child(idOfSndr).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(idOfRecr)) {
-                    String typeofrequest = dataSnapshot.child(idOfRecr).child("typeofrequest").getValue().toString();
-
-                    if (typeofrequest.equals("sending")) {
-                        STATUS = "sendingrequest";
-                        reqFrndSndBtn.setText("Cancel friend request");
-                        reqFrndDecBtn.setVisibility(View.INVISIBLE);
-                        reqFrndDecBtn.setEnabled(false);
-                    }
-                    else if(typeofrequest.equals("receiving")){
-                        STATUS = "receivingrequest";
-                        reqFrndSndBtn.setText("Accept friend");
-
-                        reqFrndDecBtn.setVisibility(View.VISIBLE);
-                        reqFrndDecBtn.setEnabled(true);
-
-                        reqFrndDecBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                FriendCncl();
-                            }
-                        });
-                    }else{
-
-                        ReferenceFrnd.child(idOfSndr).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.hasChild(idOfRecr)){
-                                    STATUS = "addedfriends";
-                                    reqFrndSndBtn.setText("Unfriend");
-
-                                    reqFrndDecBtn.setVisibility(View.INVISIBLE);
-                                    reqFrndDecBtn.setEnabled(false);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void RequestFriend() {
-        ReferenceFrndReq.child(idOfSndr).child(idOfRecr).child("typeofrequest").setValue("sending").addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    ReferenceFrndReq.child(idOfRecr).child(idOfSndr).child("typeofrequest").setValue("receiving").addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                reqFrndSndBtn.setEnabled(true);
-                                STATUS = "sendingrequest";
-                                reqFrndSndBtn.setText("Cancel friend request");
-                                reqFrndDecBtn.setVisibility(View.INVISIBLE);
-                                reqFrndDecBtn.setEnabled(false);
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-
-    private void CreateUIelements() {
-    addstatus = (TextView) findViewById(R.id.addfriendstatus);
-        addusername = (TextView) findViewById(R.id.addfriendusername);
-        addname = (TextView) findViewById(R.id.addfriendfullname);
-        addlocation = (TextView) findViewById(R.id.addfriendlocation);
-        adddob = (TextView) findViewById(R.id.addfrienddob);
-        addgender = (TextView) findViewById(R.id.addfriendgender);
-        addrelationship = (TextView) findViewById(R.id.addfriendrelationstatus);
-        addprfleimg = (CircleImageView) findViewById(R.id.addfriendprflepic);
-        reqFrndSndBtn = (Button) findViewById(R.id.addfriendbtn);
-        reqFrndDecBtn = (Button) findViewById(R.id.declinefriendbtn);
-
-        STATUS = "notadded";
-    }
 }

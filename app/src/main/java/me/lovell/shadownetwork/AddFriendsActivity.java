@@ -34,9 +34,7 @@ public class AddFriendsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friends);
-
         databaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-
         BtnSearch = (ImageButton) findViewById(R.id.btnsearch);
         inptSearchTxt = (EditText) findViewById(R.id.inputsearchusers);
 
@@ -51,26 +49,42 @@ public class AddFriendsActivity extends AppCompatActivity {
 //            }
 //        });
 
-
         ResultFromSearch = (RecyclerView) findViewById(R.id.outputfromsearch);
         ResultFromSearch.setHasFixedSize(true);
         ResultFromSearch.setLayoutManager(new LinearLayoutManager(this));
-
-
         uppermenubar = (Toolbar) findViewById(R.id.addfriendsbar);
         setSupportActionBar(uppermenubar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Add friends");
-
-
         BtnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                String inputusrsearch =  inptSearchTxt.getText().toString();
+                Query querysearch = databaseUsers.orderByChild("full_name").startAt(inputusrsearch).endAt(inputusrsearch + "\uf8ff");
+                FirebaseRecyclerAdapter<FoundFriends,FoundFriendsHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<FoundFriends, FoundFriendsHolder>
+                        (
+                                FoundFriends.class, R.layout.foundfriends, FoundFriendsHolder.class, querysearch
+                        )
+                {
+                    @Override
+                    protected void populateViewHolder(FoundFriendsHolder viewHolder, FoundFriends model, final int position) {
+                        viewHolder.setFull_name(model.getFull_name());
+                        viewHolder.setProfileStatus(model.getProfileStatus());
+                        viewHolder.setProfile_image(getApplicationContext(), model.getProfile_image());
+                        viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String foundTheUser = getRef(position).getKey();
 
-
-                findfriendaction(inputusrsearch);
+                                Intent goAddUser = new Intent (AddFriendsActivity.this, AddFriendProfileActivity.class);
+                                goAddUser.putExtra("foundTheUser", foundTheUser);
+                                startActivity(goAddUser);
+                            }
+                        });
+                    }
+                };
+                ResultFromSearch.setAdapter(firebaseRecyclerAdapter);
             }
         });
     }
@@ -87,61 +101,20 @@ public class AddFriendsActivity extends AppCompatActivity {
         return true;
     }
 
-
-    private void findfriendaction(String inputusrsearch) {
-
-        Query querysearch = databaseUsers.orderByChild("full_name").startAt(inputusrsearch).endAt(inputusrsearch + "\uf8ff");
-
-        FirebaseRecyclerAdapter<FoundFriends,FoundFriendsHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<FoundFriends, FoundFriendsHolder>
-                (
-                FoundFriends.class,
-                R.layout.foundfriends,
-                FoundFriendsHolder.class,
-                        querysearch
-                 )
-        {
-            @Override
-            protected void populateViewHolder(FoundFriendsHolder viewHolder, FoundFriends model, final int position) {
-
-                viewHolder.setFull_name(model.getFull_name());
-                viewHolder.setProfileStatus(model.getProfileStatus());
-                viewHolder.setProfile_image(getApplicationContext(), model.getProfile_image());
-
-                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String foundTheUser = getRef(position).getKey();
-
-                        Intent goAddUser = new Intent (AddFriendsActivity.this, AddFriendProfileActivity.class);
-                        goAddUser.putExtra("foundTheUser", foundTheUser);
-                        startActivity(goAddUser);
-                    }
-                });
-            }
-        };
-
-        ResultFromSearch.setAdapter(firebaseRecyclerAdapter);
-
-    }
-
     public static class FoundFriendsHolder extends  RecyclerView.ViewHolder{
         View mView;
-
         public FoundFriendsHolder(View itemView){
             super(itemView);
             mView = itemView;
         }
-
         public void setProfile_image(Context cntx, String profile_image){
             CircleImageView usrimge = (CircleImageView) mView.findViewById(R.id.foundusrimg);
             Picasso.with(cntx).load(profile_image).placeholder(R.drawable.profile_img).into(usrimge);
         }
-
         public void setFull_name (String full_name){
             TextView usrname = (TextView) mView.findViewById(R.id.foundusrname);
             usrname.setText(full_name);
         }
-
         public void setProfileStatus (String profileStatus){
             TextView usrstatus = (TextView) mView.findViewById(R.id.foundusrstatus);
             usrstatus.setText(profileStatus);

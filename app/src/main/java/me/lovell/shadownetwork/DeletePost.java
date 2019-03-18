@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,7 +27,6 @@ public class DeletePost extends AppCompatActivity {
     private Toolbar deletefriendsprofilebar;
     private DatabaseReference refClck;
     private FirebaseAuth menuAuth;
-
     private String idStatus;
     private String crntUsrID;
     private String dbCrntUsr;
@@ -39,13 +37,10 @@ public class DeletePost extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_post);
-
         menuAuth = FirebaseAuth.getInstance();
         crntUsrID = menuAuth.getCurrentUser().getUid();
-
         idStatus = getIntent().getExtras().get("idStatus").toString();
         refClck = FirebaseDatabase.getInstance().getReference().child("Posts").child(idStatus);
-
         imgPost = (ImageView) findViewById(R.id.image_status);
         deleteDesc = (TextView) findViewById(R.id.delete_text);
         //status delete
@@ -54,44 +49,34 @@ public class DeletePost extends AppCompatActivity {
         setSupportActionBar(deletefriendsprofilebar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-
         btnDelete.setVisibility(View.INVISIBLE);
-
         refClck.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 if(dataSnapshot.exists()){
                     desc = dataSnapshot.child("description").getValue().toString();
                     img = dataSnapshot.child("postimage").getValue().toString();
                     dbCrntUsr = dataSnapshot.child("uid").getValue().toString();
-
                     deleteDesc.setText(desc);
                     Picasso.with(DeletePost.this).load(img).into(imgPost);
-
                     if(crntUsrID.equals(dbCrntUsr)){
-
                         btnDelete.setVisibility(View.VISIBLE);
-
                     }
                 }
             }
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) { }
         });
-
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                erasePost();
+                refClck.removeValue();
+                Intent mainIntent = new Intent(DeletePost.this, MainActivity.class);
+                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(mainIntent);
+                finish();
             }
         });
-
-
     }
 
     @Override
@@ -106,18 +91,4 @@ public class DeletePost extends AppCompatActivity {
         return true;
     }
 
-    private void erasePost() {
-        refClck.removeValue();
-        backToNewsFeed();
-        Toast.makeText(this, "Successfully deleted", Toast.LENGTH_LONG);
-
-    }
-
-    private void backToNewsFeed()
-    {
-        Intent mainIntent = new Intent(DeletePost.this, MainActivity.class);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(mainIntent);
-        finish();
-    }
 }

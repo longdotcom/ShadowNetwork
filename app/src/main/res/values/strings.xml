@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ShadowNetwork</string>
-    <string name="open">Drawer Open</string>
-    <string name="close">Drawer Close</string>
+    <string name="open">OpenMenu</string>
+    <string name="close">CloseMenu</string>
     <string name="home">Home</string>
     <string name="friends">Friends</string>
     <string name="logout">Logout</string>

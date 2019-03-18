@@ -11,6 +11,8 @@ public class Friend {
         this.date = date;
     }
 
+    public Friend(String name, String created){this.name=name;this.created=created;}
+
     public String getDate() {
         return date;
     }

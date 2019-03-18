@@ -54,26 +54,61 @@ public class CreateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create);
-
         menuAuth = FirebaseAuth.getInstance();
         loggedInID = menuAuth.getCurrentUser().getUid();
         loggedInRef = FirebaseDatabase.getInstance().getReference().child("Users").child(loggedInID);
         picRefMember = FirebaseStorage.getInstance().getReference().child("Profile Images");
-
         createusername = (EditText) findViewById(R.id.createUsername);
         fullname = (EditText) findViewById(R.id.createName);
         country = (EditText) findViewById(R.id.createCountry);
         profilePic = (CircleImageView) findViewById(R.id.createImage);
         saveButton = (Button) findViewById(R.id.createBtn);
         progressBar = new ProgressDialog(this);
-
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createProfileInfo();
+                String profileUsername = createusername.getText().toString();
+                String profileFullname = fullname.getText().toString();
+                String profileCountry = country.getText().toString();
+                if (TextUtils.isEmpty(profileUsername)) {
+                    Toast.makeText(CreateActivity.this, "Username can not be blank", Toast.LENGTH_LONG);
+                } else if (TextUtils.isEmpty(profileFullname)) {
+                    Toast.makeText(CreateActivity.this, "Full name can not be blank", Toast.LENGTH_LONG);
+                } else if (TextUtils.isEmpty(profileCountry)) {
+                    Toast.makeText(CreateActivity.this, "Country can not be blank", Toast.LENGTH_LONG);
+                } else {
+                    progressBar.setTitle("Setting up account");
+                    progressBar.setMessage("This won't take long..");
+                    progressBar.show();
+                    progressBar.setCanceledOnTouchOutside(true);
+                    HashMap loggedInMap = new HashMap();
+                    loggedInMap.put("user_name", profileUsername);
+                    loggedInMap.put("full_name", profileFullname);
+                    loggedInMap.put("locationCountry", profileCountry);
+                    loggedInMap.put("profileStatus", "Status");
+                    loggedInMap.put("gender", "n/a");
+                    loggedInMap.put("dob", "n/a");
+                    loggedInMap.put("relationshipStatus", "n/a");
+                    loggedInRef.updateChildren(loggedInMap).addOnCompleteListener(new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if (task.isSuccessful()) {
+                                Intent goToMainIntent = new Intent(CreateActivity.this, MainActivity.class);
+                                goToMainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(goToMainIntent);
+                                finish();
+                                Toast.makeText(CreateActivity.this, "Your profile has been set up", Toast.LENGTH_LONG).show();
+                                progressBar.dismiss();
+                            } else {
+                                String errorMsg = task.getException().getMessage();
+                                Toast.makeText(CreateActivity.this, "Problem setting up account" + errorMsg, Toast.LENGTH_LONG).show();
+                                progressBar.dismiss();
+                            }
+                        }
+                    });
+                }
             }
         });
-
         // for uploading profile image
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,67 +123,48 @@ public class CreateActivity extends AppCompatActivity {
         loggedInRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 if(dataSnapshot.exists()){
                     if(dataSnapshot.hasChild("profile_image")){
                         String img = dataSnapshot.child("profile_image").getValue().toString();
                         Picasso.with(CreateActivity.this).load(img).placeholder(R.drawable.profile_img).into(profilePic);
-
                     }
-                    else{
-
-                    }
-
+                    else{ }
                 }
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
-
     }
 
     // method for cropping and uploading image to profile
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == imageFromGal && resultCode == RESULT_OK && data != null) {
             Uri picuri = data.getData();
-
             CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setAspectRatio(1, 1).start(this);
         }
-
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult imageRes = CropImage.getActivityResult(data);
-
             if (resultCode == RESULT_OK) {
                 Uri statusUri = imageRes.getUri();
-
                 StorageReference imglocation = picRefMember.child(loggedInID + ".jpg");
-
                 imglocation.putFile(statusUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(CreateActivity.this, "Picture uploaded successfully", Toast.LENGTH_LONG);
-
                             Task<Uri> getURIres = task.getResult().getMetadata().getReference().getDownloadUrl();
-
                             getURIres.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     final String retrieveUrl = uri.toString();
-
                                     loggedInRef.child("profile_image").setValue(retrieveUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
                                                 Intent ownint = new Intent(CreateActivity.this, CreateActivity.class);
                                                 startActivity(ownint);
-
                                                 Toast.makeText(CreateActivity.this, "Success", Toast.LENGTH_LONG).show();
                                             } else {
                                                 String msgErr = task.getException().getMessage();
@@ -167,56 +183,4 @@ public class CreateActivity extends AppCompatActivity {
         }
     }
 
-
-    // set up profile attributes
-    private void createProfileInfo() {
-        String profileUsername = createusername.getText().toString();
-        String profileFullname = fullname.getText().toString();
-        String profileCountry = country.getText().toString();
-
-        if (TextUtils.isEmpty(profileUsername)) {
-            Toast.makeText(this, "Username can not be blank", Toast.LENGTH_LONG);
-        } else if (TextUtils.isEmpty(profileFullname)) {
-            Toast.makeText(this, "Full name can not be blank", Toast.LENGTH_LONG);
-        } else if (TextUtils.isEmpty(profileCountry)) {
-            Toast.makeText(this, "Country can not be blank", Toast.LENGTH_LONG);
-        } else {
-            progressBar.setTitle("Setting up account");
-            progressBar.setMessage("This won't take long..");
-            progressBar.show();
-            progressBar.setCanceledOnTouchOutside(true);
-
-            HashMap loggedInMap = new HashMap();
-            loggedInMap.put("user_name", profileUsername);
-            loggedInMap.put("full_name", profileFullname);
-            loggedInMap.put("locationCountry", profileCountry);
-            loggedInMap.put("profileStatus", "Status");
-            loggedInMap.put("gender", "n/a");
-            loggedInMap.put("dob", "n/a");
-            loggedInMap.put("relationshipStatus", "n/a");
-            loggedInRef.updateChildren(loggedInMap).addOnCompleteListener(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if (task.isSuccessful()) {
-                        goToMain();
-                        Toast.makeText(CreateActivity.this, "Your profile has been set up", Toast.LENGTH_LONG).show();
-                        progressBar.dismiss();
-                    } else {
-                        String errorMsg = task.getException().getMessage();
-                        Toast.makeText(CreateActivity.this, "Problem setting up account" + errorMsg, Toast.LENGTH_LONG).show();
-                        progressBar.dismiss();
-                    }
-                }
-            });
-        }
-
-    }
-
-    // redirect to news feed once profile set up
-    private void goToMain() {
-        Intent goToMainIntent = new Intent(CreateActivity.this, MainActivity.class);
-        goToMainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(goToMainIntent);
-        finish();
-    }
 }

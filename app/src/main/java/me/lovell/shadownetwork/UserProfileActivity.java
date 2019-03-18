@@ -44,12 +44,10 @@ public class UserProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-
         menuAuth = FirebaseAuth.getInstance();
         loggedinusrID = menuAuth.getCurrentUser().getUid();
         myprofiledb = FirebaseDatabase.getInstance().getReference().child("Users").child(loggedinusrID);
         noOfFriends = FirebaseDatabase.getInstance().getReference().child("Friends");
-
         mystatus = (TextView) findViewById(R.id.usrprfsts);
         myusrname = (TextView) findViewById(R.id.usrusrname);
         myname = (TextView) findViewById(R.id.usrprfname);
@@ -69,7 +67,9 @@ public class UserProfileActivity extends AppCompatActivity {
         friendnumberbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listFriends();
+                Intent gotofriendslist = new Intent(UserProfileActivity.this, FriendListActivity.class);
+                startActivity(gotofriendslist);
+                finish();
             }
         });
 
@@ -83,11 +83,8 @@ public class UserProfileActivity extends AppCompatActivity {
                     friendnumberbtn.setText("No Friends");
                 }
             }
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) { }
         });
 
         myprofiledb.addValueEventListener(new ValueEventListener() {
@@ -102,9 +99,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     String mygenderstr = dataSnapshot.child("gender").getValue().toString();
                     String myrelationstr = dataSnapshot.child("relationshipStatus").getValue().toString();
                     String mylocatestr = dataSnapshot.child("locationCountry").getValue().toString();
-
                     Picasso.with(UserProfileActivity.this).load(myimgstr).placeholder(R.drawable.profile_img).into(myprofileimg);
-
                     myusrname.setText(myusrnmestr);
                     myname.setText(mynamestr);
                     myrelationship.setText("Relationship status: "+myrelationstr);
@@ -114,16 +109,10 @@ public class UserProfileActivity extends AppCompatActivity {
                     mystatus.setText(mystatusstr);
                 }
             }
-
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) { }
         });
-
-
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -137,12 +126,4 @@ public class UserProfileActivity extends AppCompatActivity {
         return true;
     }
 
-    private void listFriends() {
-
-        Intent gotofriendslist = new Intent(UserProfileActivity.this, FriendListActivity.class);
-        gotofriendslist.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(gotofriendslist);
-        finish();
-
-    }
 }
