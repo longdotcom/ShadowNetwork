@@ -6,13 +6,10 @@
     android:layout_height="match_parent"
     android:background="@drawable/loginbackground"
     tools:context=".RegisteringActivity">
-
     <include
         android:id="@+id/regisbar"
         layout="@layout/appbarlayout">
-
     </include>
-
     <ImageView
         android:id="@+id/regIcon"
         android:layout_width="125dp"
@@ -21,7 +18,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
         app:srcCompat="@drawable/mainlogo" />
-
     <EditText
         android:id="@+id/regEmail"
         android:layout_width="match_parent"
@@ -36,7 +32,6 @@
         android:hint="Email address"
         android:inputType="textEmailAddress"
         android:padding="8dp" />
-
     <EditText
         android:id="@+id/regPassword"
         android:layout_width="match_parent"
@@ -65,8 +60,7 @@
         android:ems="10"
         android:hint="Re-enter password"
         android:inputType="textPassword"
-        android:padding="8dp" />/>
-
+        android:padding="8dp" />
     <Button
         android:id="@+id/regSignUp"
         android:layout_width="match_parent"

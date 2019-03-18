@@ -5,12 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FriendListActivity">
-
     <include
         android:id="@+id/frndlistbar"
         layout="@layout/appbarlayout"
         ></include>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_of_friends"
         android:layout_width="match_parent"

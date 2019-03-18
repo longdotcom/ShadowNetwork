@@ -5,21 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AddFriendsActivity">
-
     <include
         android:id="@+id/addfriendsbar"
         layout="@layout/appbarlayout"
         ></include>
-
-
-
     <RelativeLayout
         android:id="@+id/searchlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/addfriendsbar"
         android:layout_marginTop="10dp">
-        
         <TextView
             android:id="@+id/connecttext"
             android:layout_width="match_parent"
@@ -44,7 +39,6 @@
             android:inputType="textMultiLine"
             android:padding="9dp"
             />
-
         <ImageButton
             android:id="@+id/btnsearch"
             android:layout_width="65dp"
@@ -56,9 +50,7 @@
             android:background="@drawable/inptfield"
             android:scaleType="centerInside"
             android:src="@drawable/searchicon" />
-
     </RelativeLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/outputfromsearch"
         android:layout_width="match_parent"
@@ -69,9 +61,5 @@
         android:layout_marginTop="9dp"
         android:layout_marginEnd="9dp"
         android:layout_marginBottom="9dp">
-
     </android.support.v7.widget.RecyclerView>
-
-
-
 </RelativeLayout>

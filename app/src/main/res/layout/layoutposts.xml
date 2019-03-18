@@ -2,7 +2,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content">
-    
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,26 +11,22 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/container_for_posts">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="71dp"
             android:layout_marginTop="1dp"
             android:orientation="horizontal"
             android:padding="5dp">
-
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/image_profile_post"
                 android:layout_width="59dp"
                 android:layout_height="59dp"
                 android:layout_marginLeft="4dp"
                 android:src="@drawable/profile_img" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/name_profile_post"
                     android:layout_width="250dp"
@@ -43,14 +38,12 @@
                     android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:orientation="horizontal"
                     android:padding="2dp">
-
                     <TextView
                         android:id="@+id/txt"
                         android:layout_width="110dp"
@@ -59,7 +52,6 @@
                         android:textColor="#AAAAAA"
                         android:textSize="11sp"
                         android:textStyle="bold" />
-
                     <TextView
                         android:id="@+id/date_post"
                         android:layout_width="75dp"
@@ -67,7 +59,6 @@
                         android:text="Date"
                         android:textColor="#000000"
                         android:textSize="11sp" />
-
                     <TextView
                         android:id="@+id/time_post"
                         android:layout_width="70dp"
@@ -75,13 +66,9 @@
                         android:text="Time"
                         android:textColor="#000000"
                         android:textSize="11sp" />
-
                 </LinearLayout>
-
             </LinearLayout>
-
         </LinearLayout>
-
         <TextView
             android:id="@+id/description_post"
             android:layout_width="match_parent"
@@ -92,7 +79,6 @@
             android:text="Enter post.."
             android:textColor="#000000"
             android:textSize="14sp" />
-
         <ImageView
             android:id="@+id/image_post"
             android:layout_width="match_parent"
@@ -100,8 +86,5 @@
             android:layout_margin="3dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop" />
-
     </LinearLayout>
-    
-
 </RelativeLayout>

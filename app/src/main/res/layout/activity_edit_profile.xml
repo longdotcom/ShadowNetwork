@@ -5,23 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".EditProfileActivity">
-
     <include
         android:id="@+id/edittoolbr"
         layout="@layout/appbarlayout">
-
     </include>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_below="@id/edittoolbr">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/editimage"
                 android:layout_width="125dp"
@@ -45,7 +40,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 />
-
             <EditText
                 android:id="@+id/editusername"
                 android:layout_width="match_parent"
@@ -61,7 +55,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 />
-
             <EditText
                 android:id="@+id/editname"
                 android:layout_width="match_parent"
@@ -77,7 +70,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 />
-
             <EditText
             android:id="@+id/editlocation"
             android:layout_width="match_parent"
@@ -93,7 +85,6 @@
             android:textSize="20sp"
             android:textStyle="bold"
             />
-
             <EditText
                 android:id="@+id/editbirth"
                 android:layout_width="match_parent"
@@ -109,7 +100,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 />
-
             <EditText
                 android:id="@+id/editgender"
                 android:layout_width="match_parent"
@@ -141,7 +131,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 />
-
             <Button
                 android:id="@+id/editbtn"
                 android:layout_width="match_parent"
@@ -157,9 +146,6 @@
                 android:textStyle="bold"
                 android:textSize="20sp"
                 />
-
         </RelativeLayout>
     </ScrollView>
-
-
 </RelativeLayout>

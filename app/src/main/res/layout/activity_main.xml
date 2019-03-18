@@ -6,25 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="me.lovell.shadownetwork.MainActivity">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <include
             android:id="@+id/mainPageToolbar"
             layout="@layout/appbarlayout"
             >
         </include>
-
-
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="675dp"
             android:layout_alignParentTop="true"
             android:layout_marginTop="56dp">
-
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/userPostList"
                 android:layout_width="match_parent"
@@ -32,10 +27,7 @@
                 android:layout_alignStart="@+id/container"
                 tools:listitem="userPostList" />
         </FrameLayout>
-
-
     </RelativeLayout>
-
     <android.support.design.widget.NavigationView
         android:id="@+id/nvVw"
         android:layout_width="wrap_content"
@@ -43,6 +35,5 @@
         android:layout_gravity="start"
         android:layout_marginBottom="3dp"
         app:menu="@menu/navmnu"></android.support.design.widget.NavigationView>
-
 </android.support.v4.widget.DrawerLayout>
 

@@ -5,11 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CreatePostActivty">
-
     <include
         android:id="@+id/uppsttlbr"
         layout="@layout/appbarlayout"></include>
-
     <ImageButton
         android:id="@+id/addimg"
         android:layout_width="match_parent"
@@ -20,7 +18,6 @@
         android:layout_marginRight="20dp"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/select_image" />
-
     <EditText
         android:id="@+id/addtext"
         android:layout_width="match_parent"
@@ -33,7 +30,6 @@
         android:ems="10"
         android:hint="Add text to image post"
         android:inputType="textMultiLine" />
-
     <Button
         android:id="@+id/addpost"
         android:layout_width="300dp"

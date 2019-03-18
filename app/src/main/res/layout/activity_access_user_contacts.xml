@@ -22,7 +22,6 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp" />
-
     <ImageButton
         android:id="@+id/importBtn"
         android:layout_width="40dp"

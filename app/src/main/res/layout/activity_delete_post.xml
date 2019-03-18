@@ -5,12 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DeletePost">
-
     <include
         android:id="@+id/deletefriendsprofilebar"
         layout="@layout/appbarlayout"
         ></include>
-
     <ImageView
         android:id="@+id/image_status"
         android:layout_width="250dp"
@@ -24,7 +22,6 @@
         android:layout_marginBottom="9dp"
         android:scaleType="centerInside"
         app:srcCompat="@drawable/select_image" />
-
     <Button
         android:id="@+id/status_delete"
         android:layout_width="200dp"
@@ -40,7 +37,6 @@
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:textStyle="bold" />
-
     <TextView
         android:id="@+id/delete_text"
         android:layout_width="wrap_content"

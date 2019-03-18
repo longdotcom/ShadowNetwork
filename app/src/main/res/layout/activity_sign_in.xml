@@ -17,8 +17,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="65dp"
         app:srcCompat="@drawable/mainlogo" />
-
-
     <EditText
         android:id="@+id/loginEmail"
         android:layout_width="match_parent"
@@ -33,7 +31,6 @@
         android:hint="Email address"
         android:inputType="textEmailAddress"
         android:padding="9dp" />
-
     <EditText
         android:id="@+id/loginPassword"
         android:layout_width="match_parent"
@@ -48,7 +45,6 @@
         android:hint="Password"
         android:inputType="textPassword"
         android:padding="9dp" />
-
     <Button
         android:id="@+id/loginBTN"
         android:layout_width="match_parent"
@@ -63,7 +59,6 @@
         android:textColor="#ffffff"
         android:textSize="20sp"
         android:textStyle="bold" />
-
     <TextView
         android:id="@+id/loginCreate"
         android:layout_width="match_parent"
@@ -75,7 +70,6 @@
         android:textColor="@android:color/holo_red_dark"
         android:textSize="18sp"
         android:textStyle="bold" />
-
     <TextView
         android:id="@+id/resetpassword"
         android:layout_width="wrap_content"
@@ -90,5 +84,4 @@
         android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold" />
-
 </RelativeLayout>

@@ -10,18 +10,15 @@
         android:id="@+id/addfriendsprofilebar"
         layout="@layout/appbarlayout"
         ></include>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/addfriendsprofilebar"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="37dp">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/addfriendprflepic"
                 android:layout_width="150dp"
@@ -29,7 +26,6 @@
               android:layout_centerHorizontal="true"
                 android:layout_marginTop="40dp"
                 android:src="@drawable/profile_img" />
-
             <TextView
                 android:id="@+id/addfriendfullname"
                 android:layout_width="match_parent"
@@ -42,7 +38,6 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:id="@+id/addfriendusername"
                 android:layout_width="match_parent"
@@ -54,7 +49,6 @@
                 android:textAllCaps="false"
                 android:textColor="#000000"
                 android:textSize="16sp" />
-
             <TextView
                 android:id="@+id/addfriendstatus"
                 android:layout_width="match_parent"
@@ -66,7 +60,6 @@
                 android:textAllCaps="false"
                 android:textColor="#000000"
                 android:textSize="21sp" />
-
             <TextView
                 android:id="@+id/addfriendlocation"
                 android:layout_width="match_parent"
@@ -78,7 +71,6 @@
                 android:textAllCaps="false"
                 android:textColor="#000000"
                 android:textSize="18sp" />
-
             <TextView
                 android:id="@+id/addfrienddob"
                 android:layout_width="match_parent"
@@ -90,7 +82,6 @@
                 android:textAllCaps="false"
                 android:textColor="#000000"
                 android:textSize="18sp" />
-
             <TextView
                 android:id="@+id/addfriendgender"
                 android:layout_width="match_parent"
@@ -102,7 +93,6 @@
                 android:textAllCaps="false"
                 android:textColor="#000000"
                 android:textSize="18sp" />
-
             <TextView
                 android:id="@+id/addfriendrelationstatus"
                 android:layout_width="match_parent"
@@ -114,7 +104,6 @@
                 android:textAllCaps="false"
                 android:textColor="#000000"
                 android:textSize="18sp" />
-
             <Button
                 android:id="@+id/addfriendbtn"
                 android:layout_width="225dp"
@@ -130,7 +119,6 @@
                 android:textColor="@android:color/holo_green_light"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
             <Button
                 android:id="@+id/declinefriendbtn"
                 android:layout_width="225dp"
@@ -147,8 +135,5 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </RelativeLayout>
-
-
     </ScrollView>
-
 </RelativeLayout>
