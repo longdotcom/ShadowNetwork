@@ -108,24 +108,16 @@ public class CreateShadowProfileActivity extends AppCompatActivity {
                     String mostRepeatedName
                             = names.stream()
                             .collect(Collectors.groupingBy(w -> w, Collectors.counting()))
-                            .entrySet()
-                            .stream()
-                            .max(Comparator.comparing(Map.Entry::getValue))
-                            .get()
-                            .getKey();
-
+                            .entrySet().stream()
+                            .max(Comparator.comparing(Map.Entry::getValue)).get().getKey();
                     Log.d(TAG, "Most common name: " + mostRepeatedName);
 
                     // for current mobile number, find most occuring email to create shadow profile from
                     String mostRepeatedEmail
                             = emails.stream()
                             .collect(Collectors.groupingBy(w -> w, Collectors.counting()))
-                            .entrySet()
-                            .stream()
-                            .max(Comparator.comparing(Map.Entry::getValue))
-                            .get()
-                            .getKey();
-
+                            .entrySet().stream()
+                            .max(Comparator.comparing(Map.Entry::getValue)).get().getKey();
                     Log.d(TAG, "Most common email: " + mostRepeatedEmail);
                     Log.d(TAG, " ");
 
